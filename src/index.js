@@ -1,50 +1,21 @@
 const { GraphQLServer } = require('graphql-yoga');
 
-let links = [{
-    id: 'link-0',
-    url: 'www.howtographql.com',
-    description: 'Fullstack tutorial for GraphQL'
-  }]
-
-  let idCount = links.length;
-
 const resolvers = {
     Query: {
         info: () => `This is the API of a Hackernews Clone`,
-        feed: () => links
-    },
-    Link: {
-        id: (root) => root.id,
-        description: (root) => root.description,
-        url: (root) => root.url
+        feed: (root, args, context, info) => {
+            return context.db.query.links({}, info)
+        }
     },
     Mutation: {
-        post: (root, args) => {
-           const link = {
-            id: `link-${idCount++}`,
-            description: args.description,
-            url: args.url,
-          }
-          links.push(link)
-          return link
-        },
-        updateLink: (root, args) => {
-             links= links.map(l => {
-                if(l.id === args.id) {
-                    const newLink = {
-                        ...l,
-                        ...args
-                    }
-                    return newLink;
-                }
-            })
-        },
-        deleteLink: (root, args) => {
-             links = links.filter(l => {
-                 l.id !== args.id
-             });
+        post: (root, args, context, info) => {
+            return context.db.mutation.createLink({
+                data: {
+                    url: args.url,
+                    description: args.description
+                },
+            }, info)
         }
-
       }
 }
 
