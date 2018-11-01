@@ -1,4 +1,5 @@
-import {Prisma} from "prisma-binding";
+const  Prisma = require("prisma-binding").Prisma;
+const  Link = require("./generated/prisma.graphql");
 
 const { GraphQLServer } = require('graphql-yoga');
 
@@ -34,12 +35,7 @@ const server = new GraphQLServer({
         updateLink(id: ID!, url: String, description: String): Link
         deleteLink(id: ID!): Link
     }
-    
-    type Link {
-        id: ID!
-        description: String!
-        url: String!
-    }`,
+    `,
     resolvers,
     context: req => ({
         ...req,
