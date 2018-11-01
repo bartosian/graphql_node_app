@@ -1,3 +1,5 @@
+import {Prisma} from "prisma-binding";
+
 const { GraphQLServer } = require('graphql-yoga');
 
 const resolvers = {
@@ -39,6 +41,15 @@ const server = new GraphQLServer({
         url: String!
     }`,
     resolvers,
+    context: req => ({
+        ...req,
+        db: new Prisma({
+            typeDefs: 'src/generated/prisma.graphql',
+            endpoint: 'https://eu1.prisma.sh/bartosian1989/database/dev',
+            secret: 'mysecret123',
+            debug: true,
+        }),
+    }),
   })
 
 server.start(() => console.log(`Server is running on 4000`))
