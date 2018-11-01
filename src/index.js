@@ -27,7 +27,24 @@ const resolvers = {
           }
           links.push(link)
           return link
+        },
+        updateLink: (root, args) => {
+             links= links.map(l => {
+                if(l.id === args.id) {
+                    const newLink = {
+                        ...l,
+                        ...args
+                    }
+                    return newLink;
+                }
+            })
+        },
+        deleteLink: (root, args) => {
+             links = links.filter(l => {
+                 l.id !== args.id
+             });
         }
+
       }
 }
 
@@ -36,10 +53,13 @@ const server = new GraphQLServer({
     type Query {
         info: String!
         feed: [Link!]!
+        link(id: ID!): Link
     }
     
     type Mutation {
         post(url: String!, description: String!): Link!
+        updateLink(id: ID!, url: String, description: String): Link
+        deleteLink(id: ID!): Link
     }
     
     type Link {
